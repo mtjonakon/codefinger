@@ -1,0 +1,39 @@
+#this script is designed to communicate with the OPEN DATA portal of the
+#Dutch Judiciary site (rechtspraak.nl). The setup is general, so parameters can be modified.
+
+import requests
+from bs4 import BeautifulSoup
+import json
+import lxml
+import codecs
+import time
+import sys
+import csv
+
+#selectieparameters 
+#meerdere parameters van hetzelfde type worden door de OR operator gescheiden, van andere types door de AND operator
+query = 'zoeken?'
+
+#instantie = 'creator=http://standaarden.overheid.nl/owms/terms/Rechtbank_Amsterdam&' #doet niets
+vanaf = 'date=2014-08-01&'
+totmet = 'date=2014-09-30&' 
+soort = 'soort=uitspraak&' 
+gebied = 'subject=http://psi.rechtspraak.nl/rechtsgebied%23strafrecht&' #the %23 parameter replaces the # operator which does not work using python. 
+tekst = 'return=DOC'
+
+#request to base url rechtspraak.nl
+r = requests.get('http://data.rechtspraak.nl/uitspraken/'+query+vanaf+totmet+soort+gebied+tekst)
+
+#response
+print r.text
+
+#from this response, we want the <id>ECLI:NL:RBLIM:2013:5040</id> strings
+soup = BeautifulSoup(r.text)
+numbers = soup.find_all('id')
+
+#write to file
+f = open('./2input/case_numbers.txt', 'w')
+for i in numbers:
+	f.write(str(i.text)+"\n")
+
+f.close()

@@ -1,4 +1,4 @@
-# how to extract named entities from text. This script belongs to yhat, and can be found via the following link:
+# how to extract named entities from text. This script is based on an yhat blog post, and can be found via the following link:
 # http://blog.yhathq.com/posts/named-entities-in-law-and-order-using-nlp.html
 
 # import libraries

@@ -1,0 +1,83 @@
+# how to extract named entities from text. This script belongs to yhat, and can be found via the following link:
+# http://blog.yhathq.com/posts/named-entities-in-law-and-order-using-nlp.html
+
+# import libraries
+from __future__ import division
+import requests
+import nltk
+import re
+import pprint
+import csv
+
+#tokenize
+s = open('case.txt', 'r')
+case = s.read()
+
+#look at the text
+print case[:500]
+
+#break down the text in sentences
+sentences = nltk.sent_tokenize(case) 
+
+#check the result
+print "sentence tokenize"
+print sentences[0][:20]
+
+#break down the text in words
+tokenized = [nltk.word_tokenize(sentence) for sentence in sentences]
+
+#check the tokenized text
+print "word tokenize"
+print tokenized[0][:20]
+
+#tag words in sentence
+pos_tags = [nltk.pos_tag(sentence) for sentence in tokenized]
+
+#check the result
+print "part of speech (pos) tags, first 5 words in first sentence"
+print pos_tags[0][:10]
+
+#named entities extraction
+named_entities_chunks = nltk.batch_ne_chunk(pos_tags)
+print "named entities in the first sentence"
+print named_entities_chunks[0][:9]
+
+def find_entities(chunks):
+	#given list of tagged parts of speech, returns unique named entities
+	def traverse(tree):
+		#recursively traverses an nltk.tree. Tree to find named entities
+		entity_names = []
+
+		if hasattr(tree, 'node') and tree.node:
+			if tree.node == 'NE':
+				entity_names.append(''.join([child[0] for child in tree]))
+			else: 
+				for child in tree:
+					entity_names.extend(traverse(child))
+		return entity_names
+	named_entities = []
+
+	for chunk in chunks:
+		entities = sorted(list(set([word for tree in chunk for word in traverse(tree)])))
+		for e in entities:
+			if e not in named_entities:
+				named_entities.append(e)
+	return named_entities
+
+#application of named entities extraction method
+entity_chunks = pos_tags
+find_entities(entity_chunks)
+
+
+
+
+'''
+#write to csv file
+f = csv.writer(open('output.csv', 'w'))
+	#create headers
+f.writerow(["Sentence"])
+	#populate table
+for token in tokens2:
+	f.writerow(token)
+'''
+

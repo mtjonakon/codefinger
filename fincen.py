@@ -1,4 +1,5 @@
 #this script parses the html table from www.fincen.gov, which contains all the money service businesses registered with FinCEN.
+#http://fincen.gov/financial_institutions/msb/msbstateselector.html
 #language: Python 
 #packages
 
@@ -27,7 +28,6 @@ for r in rows:
 
 	cols = r.find_all('td')
 
-	#we are using "try" because the table is not well formatted. This allows the program to continue after encountering an error.
     try:
 
     	legal_name = cols[0].a.string
@@ -36,20 +36,21 @@ for r in rows:
     	city = cols[3].string
     	state = cols[4].string
     	zipcode = cols[5].string
-		msb_activities = cols[6].string
-		states_msb_activities = cols[7].string
-		all_states_terr_foreign = cols[8].string
-		foreign_location  = cols[9].string
-		no_branches = cols[10].string
-		auth_sign_date = cols[11].string
-		received_date = cols[12].string
+	msb_activities = cols[6].string
+	states_msb_activities = cols[7].string
+	all_states_terr_foreign = cols[8].string
+	foreign_location  = cols[9].string
+	no_branches = cols[10].string
+	auth_sign_date = cols[11].string
+	received_date = cols[12].string
+
+	output.writerow([legal_name, dba_name, address, city, state, zipcode, msb_activities, states_msb_activities, all_states_terr_foreign, foreign_location, no_branches, auth_sign_date, received_date])
 
     except:
 
     	print "bad tr string"
-    	continue #This tells the computer to move on to the next item after it encounters an error
+    	continue 
 
-    output.writerow([legal_name, dba_name, address, city, state, zipcode, msb_activities, states_msb_activities, all_states_terr_foreign, foreign_location, no_branches, auth_sign_date, received_date])
 
 
 
